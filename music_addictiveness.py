@@ -43,7 +43,7 @@ def extract_audio_features(file_path):
 
 #Run
 if __name__ == "__main__":
-    audio_file = "Square's dream (네모의 꿈).mp3"
+    audio_file = "Sangonomiya Kokomi Theme  Trailer Soundtrack (Looped) [Low Quality]   Genshin Impact [2.1].mp3"
 
     R, B, C, v = extract_audio_features(audio_file)
 
@@ -58,4 +58,4 @@ if __name__ == "__main__":
     lambda_ = 0.8
 
     A = compute_addictiveness_score(R, B, C, v, B_0, C_0, alpha_1, alpha_2, alpha_3, beta_1, beta_2, lambda_)
-    print("🎵 Addictiveness Score from Audio:", np.round(A, 3))
+    print("Addictiveness Score from Audio:", np.round(A, 3))
