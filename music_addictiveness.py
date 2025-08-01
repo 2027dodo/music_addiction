@@ -1,18 +1,11 @@
 # cd ~/Desktop/music_addiction
 # python3 music_addictiveness.py
-# 우리나라 자랑거리 = 4090.956
-# 탕후루 = 22719.762
-# 아리랑 = 4258.208
-# 아파트 = 9620.182
-# adhd music(ADDADHD Intense Relief)(3hr) = 132004.66
-# adhd music (0524 (1))(5min) = 3995.51
-# 5 min moonlight sonata = 1657.131
-# Billie Eilish Bad Guy = 12972.396
-# 아이유 네모의 꿈 = 8841.882
 
 import librosa
 import numpy as np
 import math
+import glob
+import os
 
 def compute_addictiveness_score(R, B, C, v, B_0, C_0, alpha_1, alpha_2, alpha_3, beta_1, beta_2, lambda_):
     tempo_component = alpha_1 * (R / (1 + np.exp(-beta_1 * (B - B_0))))
@@ -41,12 +34,45 @@ def extract_audio_features(file_path):
 
     return R, tempo, chord_complexity, pitch_variability
 
-#Run
+def get_audio(folder_path):
+    audio_type = ["*.mp3"]
+    audio_files = []
+
+    for type in audio_type:
+        audio_files.extend(glob.glob(os.path.join(folder_path, type)))
+
+    return audio_files
+    
+def get_available_genres(music_folder):
+    genres = []
+    if os.path.exists(music_folder):
+        for item in os.listdir(music_folder):
+            item_path = os.path.join(music_folder, item)
+            if os.path.isdir(item_path):
+                genres.append(item)
+    
+    return sorted(genres)
+
+
 if __name__ == "__main__":
-    audio_file = "Sangonomiya Kokomi Theme  Trailer Soundtrack (Looped) [Low Quality]   Genshin Impact [2.1].mp3"
+    music_folder = "music_mp3"
 
-    R, B, C, v = extract_audio_features(audio_file)
+    available_genres = get_available_genres(music_folder)
+    
+    audio_files = get_audio(music_folder)
 
+    #choose genre
+    print("Available genres:")
+    for genre in available_genres:
+        print(" ", genre)
+    print()
+    
+    genre_input = input("Enter genre name: ").strip()
+    
+    selected_genre = genre_input
+    genre_folder = os.path.join(music_folder, selected_genre)  
+    audio_files = get_audio(genre_folder)
+    
     # Parameters
     B_0 = 100
     C_0 = 5
@@ -56,6 +82,16 @@ if __name__ == "__main__":
     beta_1 = 0.1
     beta_2 = 0.2
     lambda_ = 0.8
-
-    A = compute_addictiveness_score(R, B, C, v, B_0, C_0, alpha_1, alpha_2, alpha_3, beta_1, beta_2, lambda_)
-    print("Addictiveness Score from Audio:", np.round(A, 3))
+    
+    results = []
+    
+    for i, audio_file in enumerate(audio_files, 1):
+        
+        R, B, C, v = extract_audio_features(audio_file)
+        
+        A = compute_addictiveness_score(R, B, C, v, B_0, C_0, alpha_1, alpha_2, alpha_3, beta_1, beta_2, lambda_)
+        results.append((audio_file, A))
+    
+    for i, (file_path, score) in enumerate(results, 1):
+        filename = os.path.basename(file_path)
+        print(f"{i:2d}. {filename}: {np.round(score, 3)}")
