@@ -1,7 +1,3 @@
-# cd ~/Desktop/music_addiction
-# python3 linear_regression_model.py
-# source essenv/bin/activate
-
 import librosa
 import numpy as np
 import glob

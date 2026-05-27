@@ -1,6 +1,3 @@
-# cd ~/Desktop/music_addiction
-# python3 music_addictiveness.py
-
 import librosa
 import numpy as np
 import math
